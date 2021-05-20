@@ -1,6 +1,6 @@
 package com.valbermedeiros.dscatalog.resources;
 
-import com.valbermedeiros.dscatalog.entities.Category;
+import com.valbermedeiros.dscatalog.dto.CategoryDto;
 import com.valbermedeiros.dscatalog.services.CategoryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,8 +20,8 @@ public class CategoryResource {
     }
 
     @GetMapping
-    public ResponseEntity<List<Category>> findAll() {
-        List<Category> list = service.findAll();
+    public ResponseEntity<List<CategoryDto>> findAll() {
+        List<CategoryDto> list = service.findAll();
         return ResponseEntity.ok().body(list);
     }
 

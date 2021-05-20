@@ -1,10 +1,12 @@
 package com.valbermedeiros.dscatalog.services;
 
+import com.valbermedeiros.dscatalog.dto.CategoryDto;
 import com.valbermedeiros.dscatalog.entities.Category;
 import com.valbermedeiros.dscatalog.repositories.CategoryRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoryService {
@@ -15,8 +17,11 @@ public class CategoryService {
         this.repository = repository;
     }
 
-    public List<Category> findAll() {
-        return repository.findAll();
+    public List<CategoryDto> findAll() {
+        List<Category> list =  repository.findAll();
+        return list.stream()
+                .map(CategoryDto::new)
+                .collect(Collectors.toList());
     }
 
 }
