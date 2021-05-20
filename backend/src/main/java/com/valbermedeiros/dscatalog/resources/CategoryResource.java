@@ -2,6 +2,8 @@ package com.valbermedeiros.dscatalog.resources;
 
 import com.valbermedeiros.dscatalog.dto.CategoryDto;
 import com.valbermedeiros.dscatalog.services.CategoryService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/categories")
@@ -26,8 +26,8 @@ public class CategoryResource {
     }
 
     @GetMapping
-    public ResponseEntity<List<CategoryDto>> findAll() {
-        List<CategoryDto> list = service.findAll();
+    public ResponseEntity<Page<CategoryDto>> findAll(Pageable pageable) {
+        Page<CategoryDto> list = service.findAll(pageable);
         return ResponseEntity.ok().body(list);
     }
 
