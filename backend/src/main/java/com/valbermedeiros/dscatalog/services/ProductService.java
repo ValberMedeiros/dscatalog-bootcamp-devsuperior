@@ -1,7 +1,9 @@
 package com.valbermedeiros.dscatalog.services;
 
+import com.valbermedeiros.dscatalog.dto.CategoryDto;
 import com.valbermedeiros.dscatalog.dto.ProductDto;
 import com.valbermedeiros.dscatalog.entities.Product;
+import com.valbermedeiros.dscatalog.repositories.CategoryRepository;
 import com.valbermedeiros.dscatalog.repositories.ProductRepository;
 import com.valbermedeiros.dscatalog.services.exceptions.DataBaseException;
 import com.valbermedeiros.dscatalog.services.exceptions.ResourceNotFoundException;
@@ -20,8 +22,11 @@ public class ProductService {
 
     private final ProductRepository repository;
 
-    public ProductService(ProductRepository repository) {
+    private final CategoryRepository categoryRepository;
+
+    public ProductService(ProductRepository repository, CategoryRepository categoryRepository) {
         this.repository = repository;
+        this.categoryRepository = categoryRepository;
     }
 
     public Page<ProductDto> findAll(Pageable pageable) {
@@ -39,7 +44,7 @@ public class ProductService {
     @Transactional
     public ProductDto insert(ProductDto dto) {
         var entity = new Product();
-        entity.setName(dto.getName());
+        copyDtoToEntity(dto, entity);
         entity = repository.save(entity);
         return new ProductDto(entity);
     }
@@ -48,7 +53,7 @@ public class ProductService {
     public ProductDto update(ProductDto dto, Long id) {
         try {
             Product entity = repository.getOne(id);
-            entity.setName(dto.getName());
+            copyDtoToEntity(dto, entity);
             entity = repository.save(entity);
             return new ProductDto(entity);
         } catch (EntityNotFoundException e) {
@@ -64,6 +69,21 @@ public class ProductService {
             throw new ResourceNotFoundException("Id not found " + id);
         } catch (DataIntegrityViolationException e) {
             throw new DataBaseException("Integrity violation");
+        }
+    }
+
+    private void copyDtoToEntity(ProductDto dto, Product entity) {
+
+        entity.setName(dto.getName());
+        entity.setDescription(dto.getDescription());
+        entity.setPrice(dto.getPrice());
+        entity.setImgUrl(dto.getImgUrl());
+        entity.setDate(dto.getDate());
+
+        entity.getCategories().clear();
+        for (CategoryDto catDto : dto.getCategories()) {
+            var category = categoryRepository.getOne(catDto.getId());
+            entity.getCategories().add(category);
         }
     }
 }
