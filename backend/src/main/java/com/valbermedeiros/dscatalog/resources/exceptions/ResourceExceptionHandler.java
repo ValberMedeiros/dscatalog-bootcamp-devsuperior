@@ -22,7 +22,7 @@ public class ResourceExceptionHandler {
 
     @ExceptionHandler(DataBaseException.class)
     public ResponseEntity<StandardError> dataBaseExceptionHandler(DataBaseException ex, HttpServletRequest request) {
-        var status = HttpStatus.BAD_REQUEST;
+        var status = HttpStatus.CONFLICT;
         var error = getStandardError(ex, status, request, "Database exception");
         return ResponseEntity.status(status).body(error);
     }
