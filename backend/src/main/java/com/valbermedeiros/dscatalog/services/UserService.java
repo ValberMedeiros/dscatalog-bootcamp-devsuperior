@@ -3,6 +3,7 @@ package com.valbermedeiros.dscatalog.services;
 import com.valbermedeiros.dscatalog.dto.RoleDto;
 import com.valbermedeiros.dscatalog.dto.UserDto;
 import com.valbermedeiros.dscatalog.dto.UserInsertDto;
+import com.valbermedeiros.dscatalog.dto.UserUpdateDto;
 import com.valbermedeiros.dscatalog.entities.User;
 import com.valbermedeiros.dscatalog.repositories.RoleRepository;
 import com.valbermedeiros.dscatalog.repositories.UserRepository;
@@ -55,7 +56,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserDto update(UserDto dto, Long id) {
+    public UserDto update(UserUpdateDto dto, Long id) {
         try {
             User entity = repository.getOne(id);
             copyDtoToEntity(dto, entity);
