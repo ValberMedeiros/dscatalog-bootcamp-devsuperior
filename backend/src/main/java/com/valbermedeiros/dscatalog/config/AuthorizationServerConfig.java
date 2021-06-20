@@ -1,5 +1,6 @@
 package com.valbermedeiros.dscatalog.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,10 +16,16 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
-    private BCryptPasswordEncoder passwordEncoder;
-    private JwtAccessTokenConverter accessTokenConverter;
-    private JwtTokenStore tokenStore;
-    private AuthenticationManager authenticationManager;
+    @Value("${security.oauth2.client.client-id}")
+    private String clientId;
+    @Value("${security.oauth2.client.client-secret}")
+    private String clientSecret;
+    @Value("${jwt.duration}")
+    private Integer jwtDuration;
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final JwtAccessTokenConverter accessTokenConverter;
+    private final JwtTokenStore tokenStore;
+    private final AuthenticationManager authenticationManager;
 
     public AuthorizationServerConfig(
             BCryptPasswordEncoder passwordEncoder,
@@ -43,11 +50,11 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients
                 .inMemory()
-                .withClient("dscatalog")
-                .secret(passwordEncoder.encode("dscatalog123"))
+                .withClient(clientId)
+                .secret(passwordEncoder.encode(clientSecret))
                 .scopes("read", "write")
                 .authorizedGrantTypes("password")
-                .accessTokenValiditySeconds(86400);
+                .accessTokenValiditySeconds(jwtDuration);
     }
 
     @Override
