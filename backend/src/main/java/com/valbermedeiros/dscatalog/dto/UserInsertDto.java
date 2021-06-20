@@ -1,5 +1,8 @@
 package com.valbermedeiros.dscatalog.dto;
 
+import com.valbermedeiros.dscatalog.services.validation.UserInsertValid;
+
+@UserInsertValid
 public class UserInsertDto extends UserDto{
 
     private static final long serialVersionUID = 1L;
@@ -10,12 +13,10 @@ public class UserInsertDto extends UserDto{
         super();
     }
 
-    @Override
     public String getPassword() {
         return password;
     }
 
-    @Override
     public void setPassword(String password) {
         this.password = password;
     }
