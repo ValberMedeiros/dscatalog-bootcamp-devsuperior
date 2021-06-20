@@ -1,5 +1,6 @@
 package com.valbermedeiros.dscatalog.config;
 
+import com.valbermedeiros.dscatalog.components.JwtTokenEnhancer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -9,8 +10,11 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableAuthorizationServer
@@ -26,17 +30,19 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     private final JwtAccessTokenConverter accessTokenConverter;
     private final JwtTokenStore tokenStore;
     private final AuthenticationManager authenticationManager;
+    private final JwtTokenEnhancer jwtTokenEnhancer;
 
     public AuthorizationServerConfig(
             BCryptPasswordEncoder passwordEncoder,
             JwtAccessTokenConverter accessTokenConverter,
             JwtTokenStore tokenStore,
-            AuthenticationManager authenticationManager
-    ) {
+            AuthenticationManager authenticationManager,
+            JwtTokenEnhancer jwtTokenEnhancer) {
         this.passwordEncoder = passwordEncoder;
         this.accessTokenConverter = accessTokenConverter;
         this.tokenStore = tokenStore;
         this.authenticationManager = authenticationManager;
+        this.jwtTokenEnhancer = jwtTokenEnhancer;
     }
 
     @Override
@@ -59,9 +65,13 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+        var chain = new TokenEnhancerChain();
+        chain.setTokenEnhancers(Arrays.asList(accessTokenConverter, jwtTokenEnhancer));
+
         endpoints
                 .authenticationManager(authenticationManager)
                 .tokenStore(tokenStore)
-                .accessTokenConverter(accessTokenConverter);
+                .accessTokenConverter(accessTokenConverter)
+                .tokenEnhancer(chain);
     }
 }
