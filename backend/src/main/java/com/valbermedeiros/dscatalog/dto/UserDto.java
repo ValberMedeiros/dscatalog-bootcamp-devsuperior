@@ -3,6 +3,8 @@ package com.valbermedeiros.dscatalog.dto;
 import com.valbermedeiros.dscatalog.entities.Role;
 import com.valbermedeiros.dscatalog.entities.User;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,8 +14,12 @@ public class UserDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;
+
+    @NotBlank
     private String firstName;
     private String lastName;
+
+    @Email
     private String email;
     private String password;
 

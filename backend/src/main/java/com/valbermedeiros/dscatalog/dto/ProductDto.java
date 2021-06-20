@@ -3,6 +3,10 @@ package com.valbermedeiros.dscatalog.dto;
 import com.valbermedeiros.dscatalog.entities.Category;
 import com.valbermedeiros.dscatalog.entities.Product;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.PastOrPresent;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -12,10 +16,19 @@ import java.util.Set;
 public class ProductDto implements Serializable {
 
     private Long id;
+
+    @Size(min = 5, max = 60)
+    @NotBlank
     private String name;
+
+    @NotBlank
     private String description;
+
+    @Positive
     private Double price;
     private String imgUrl;
+
+    @PastOrPresent
     private Instant date;
 
     private List<CategoryDto> categories = new ArrayList<>();
