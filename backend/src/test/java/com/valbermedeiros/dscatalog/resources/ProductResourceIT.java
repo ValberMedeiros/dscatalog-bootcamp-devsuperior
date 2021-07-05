@@ -3,6 +3,7 @@ package com.valbermedeiros.dscatalog.resources;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.valbermedeiros.dscatalog.dto.ProductDto;
 import com.valbermedeiros.dscatalog.tests.Factory;
+import com.valbermedeiros.dscatalog.tests.TokenUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +27,21 @@ class ProductResourceIT {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private TokenUtil tokenUtil;
+
     private Long existingId;
     private Long nonExistingId;
     private Long countTotalProducts;
 
+    private String username;
+    private String password;
+
     @BeforeEach
     void setUp() {
+        username = "maria@gmail.com";
+        password = "123456";
+
         existingId = 1L;
         nonExistingId = 1000L;
         countTotalProducts = 25L;
@@ -52,6 +62,7 @@ class ProductResourceIT {
 
     @Test
     void updateShouldReturnProductDtopWhenIdExists() throws Exception {
+        String accessToken = tokenUtil.obtainAccessToken(mockMvc, username, password);
         ProductDto productDto = Factory.createProductDTO();
         String jsonBody = objectMapper.writeValueAsString(productDto);
 
@@ -60,6 +71,7 @@ class ProductResourceIT {
 
         mockMvc
                 .perform(put("/products/{id}", existingId)
+                        .header("Authorization", "Bearer " + accessToken)
                         .content(jsonBody)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -71,11 +83,13 @@ class ProductResourceIT {
 
     @Test
     void updateShouldReturnNotFoundWhenIdDoesNotExists() throws Exception {
+        String accessToken = tokenUtil.obtainAccessToken(mockMvc, username, password);
         ProductDto productDto = Factory.createProductDTO();
         String jsonBody = objectMapper.writeValueAsString(productDto);
 
         mockMvc
                 .perform(put("/products/{id}", nonExistingId)
+                        .header("Authorization", "Bearer " + accessToken)
                         .content(jsonBody)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))

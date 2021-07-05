@@ -64,6 +64,7 @@ class ProductServiceTests {
         when(repository.save(ArgumentMatchers.any())).thenReturn(product);
         when(repository.findById(existingId)).thenReturn(Optional.of(product));
         when(repository.findById(nonExisttingId)).thenReturn(Optional.empty());
+        when(repository.find(any(), any(), any())).thenReturn(page);
         when(repository.getOne(existingId)).thenReturn(product);
         when(repository.getOne(nonExisttingId)).thenThrow(EntityNotFoundException.class);
         when(categoryRepository.getOne(existingId)).thenReturn(category);
@@ -94,10 +95,9 @@ class ProductServiceTests {
     @Test
     void findAllPagedShouldReturnPage() {
         Pageable pageable = PageRequest.of(0, 10);
-        Page<ProductDto> result = service.findAll(null, null, pageable);
+        Page<ProductDto> result = service.findAll(0L, "", pageable);
 
         assertNotNull(result);
-        verify(repository).findAll(pageable);
     }
 
     @Test
