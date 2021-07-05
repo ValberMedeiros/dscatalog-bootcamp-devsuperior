@@ -54,7 +54,7 @@ class ProductResourceTests {
         nonExistingId = 1000L;
         dependetId = 3L;
 
-        when(productService.findAll(any())).thenReturn(page);
+        when(productService.findAll(null, null, any())).thenReturn(page);
         
         when(productService.findById(existingId)).thenReturn(productDto);
         when(productService.findById(nonExistingId)).thenThrow(ResourceNotFoundException.class);

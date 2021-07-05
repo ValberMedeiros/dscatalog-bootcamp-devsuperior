@@ -2,6 +2,7 @@ package com.valbermedeiros.dscatalog.services;
 
 import com.valbermedeiros.dscatalog.dto.CategoryDto;
 import com.valbermedeiros.dscatalog.dto.ProductDto;
+import com.valbermedeiros.dscatalog.entities.Category;
 import com.valbermedeiros.dscatalog.entities.Product;
 import com.valbermedeiros.dscatalog.repositories.CategoryRepository;
 import com.valbermedeiros.dscatalog.repositories.ProductRepository;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -29,8 +32,9 @@ public class ProductService {
         this.categoryRepository = categoryRepository;
     }
 
-    public Page<ProductDto> findAll(Pageable pageable) {
-        Page<Product> list =  repository.findAll(pageable);
+    public Page<ProductDto> findAll(Long categoryId, String name, Pageable pageable) {
+        List<Category> categories = (categoryId == 0) ? null : Arrays.asList(categoryRepository.getOne(categoryId));
+        Page<Product> list =  repository.find(categories, name.trim(), pageable);
         return list
                 .map(ProductDto::new);
     }
